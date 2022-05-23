@@ -30,6 +30,12 @@
                 <input type="text" class="goods-search" v-model="search" />
                 <button class="search-button" type="button" v-on:click="filterItems">Искать</button>
             </div>
+            <search>
+                :value="search"
+                @input="searchChangeHandler"
+                @searchclick="filterItems"
+
+            </search>
             <div class="actions">
                 <button class="cart-button" type="button" v-on:click="setVisionCard">Корзина</button>
             </div>
