@@ -15,6 +15,14 @@ function servicePost(url, body) {
       body: JSON.stringify(body)
     })
 }
+function serviceDelete(url, body) {
+  return fetch(url, {
+    method: 'DELETE',
+    headers: {
+      "content-type": "application/json"
+      body: JSON.stringify(body)
+    })
+}
 function init() {
   const Search = Vue.component('search', {
     props: [
@@ -134,6 +142,13 @@ const app = new Vue({
 })
 }
 window.onload = init
+
+
+
+
+
+
+
 
 
 
