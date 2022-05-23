@@ -1,12 +1,20 @@
 const BASE_URL = 'http://localhost:8000';
 const GET_GOODS_ITEMS = `${BASE_URL}goods`
+const GET_BASKET_GOODS_ITEMS = `${BASE_URL}basketgoods`
 //const GET_BASKET_GOODS_ITEMS = `${BASE_URL}getBasket.json`
 
 function service(url) {
   return fetch(url)
     .then((res) => res.json())
 }
-
+function servicePost(url, body) {
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      "content-type": "application/json"
+      body: JSON.stringify(body)
+    })
+}
 function init() {
   const Search = Vue.component('search', {
     props: [
@@ -59,35 +67,18 @@ const basketGoods = Vue.component('basket-goods', {
           ></div>
         </div>
       </div class="basket-card__content">
-      <basket-item
-            :item="{
-        id: '1',
-      'count':10,
-      'data': {
-        'id':'1',
-      'product_name': 'product 1',
-      'price':200
-      },
-      'total':1000
-    }"
-    ></basket-item>
-    <basket-item
-    : item = "{
-id: '1',
-  'count': 10,
-    'data': {
-  'id': '1',
-    'product_name': 'product 1',
-      'price': 200
-},
-'total': 1000
-}"
-  ></basket - item >
+      basketGoodsItems
+
+      <basket-item v-for="item in basketGoodsItems:item=" item"></basket-item>
 </div >
 </div >
 </div >
 ,
   mounted(){
+  service(GET_BASKET_GOODS_ITEMS).then((basketGoods) => {
+    this.basketGoodsItems = basketGoods
+  })
+}
 })
 const goodsItem = Vue.component('goods-item', {
   props: [
@@ -96,7 +87,8 @@ const goodsItem = Vue.component('goods-item', {
   template:
     <div class="goods-item">
       <p>{{ item.price }}</p>
-    </div>
+      <custom-button @click="$emit('addgood', item.id)">добавить</custom-button>
+    </div >
 })
 const app = new Vue({
   el: '#root',
@@ -104,7 +96,7 @@ const app = new Vue({
     items: [],
     filteredItems: [],
     search: '',
-    cardIsVision: true
+    cardIsVision: false
   },
   methods: {
     setVisionCard() {
@@ -115,29 +107,40 @@ const app = new Vue({
         this.items = data;
       })
     },
+    addGood(goodId) {
+      servicePost(GET_BASKET_GOODS_ITEMS, {
+        id: goodId,
+      }
   },
-  filteredItems() {
-    this.filteredItems = this.items.filter(({ product_name }) => {
-      return product_name.match(new RegExp(this.search, 'gui'))
-    })
+    filteredItems() {
+      this.filteredItems = this.items.filter(({ product_name }) => {
+        return product_name.match(new RegExp(this.search, 'gui'))
+      })
+    },
+    searchChangeHandler(value) {
+      this.search = value;
+    }
   },
-  searchChangeHandler(value) {
-    this.search = value;
-  }
-},
   computed: {
-  calculatePrice() {
-    return this.filteredItems.reduce((prev, { price }) => {
-      return prev + price;
-    }, 0)
+    calculatePrice() {
+      return this.filteredItems.reduce((prev, { price }) => {
+        return prev + price;
+      }, 0)
+    },
   },
-},
   mounted() {
-  this.fetchGoods();
-}
+    this.fetchGoods();
+  }
 })
 }
 window.onload = init
+
+
+
+
+
+
+
 
 
 
